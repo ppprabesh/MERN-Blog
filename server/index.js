@@ -11,7 +11,7 @@ import serviceAccountKey from "./mern-blogging-website-c0b9f-firebase-adminsdk-z
 import { getAuth } from "firebase-admin/auth";
 
 const server = express();
-let PORT = 3000;
+let PORT = 4000;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountKey),
@@ -114,20 +114,18 @@ server.post("/api/signin", (req, res) => {
     .then((user) => {
       //if user not found
       if (!user) {
-        return res.json(403).json({ error: "User not found" });
+        return res.status(403).json({ error: "User not found" });
       }
-
       bcrypt.compare(password, user.personal_info.password, (err, result) => {
         if (err) {
           return res
             .status(403)
             .json({ error: "Error found in login. Please try again." });
         }
-
         if (!result) {
           return res.status(403).json({ error: "Incorrect password." });
         } else {
-          // console.log("Signin Succesfull");
+          console.log("Signin Succesfull");
           return res.status(200).json(formatDatatoSend(user));
         }
       });
@@ -135,7 +133,7 @@ server.post("/api/signin", (req, res) => {
     //if any other internal error
     .catch((err) => {
       console.log(err);
-      return res.json(500).json({ error: err.message });
+      return res.status(500).json({ error: err.message });
     });
 });
 
